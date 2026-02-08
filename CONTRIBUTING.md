@@ -1,6 +1,6 @@
 # Contributing to WiFi Credential Exfiltration Toolkit
 
-First off, thank you for considering contributing to this defensive security research project! 
+First off, thank you for considering contributing to this offensive security research project! 
 
 ## Code of Conduct
 

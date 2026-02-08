@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-lightgrey)
 
-**A defensive security research tool for analyzing WiFi credential extraction techniques**
+**An offensive security toolkit for WiFi credential extraction and penetration testing**
 
 </div>
 
@@ -16,11 +16,11 @@
 
 ## 📋 Overview
 
-This toolkit demonstrates common techniques used in WiFi credential exfiltration attacks. It serves as a defensive research platform to understand:
-- How attackers extract saved WiFi passwords from compromised systems
+This toolkit implements advanced techniques for WiFi credential extraction during penetration testing engagements. It serves as an offensive security platform to understand:
+- How to extract saved WiFi passwords from compromised systems
 - Methods for covert data exfiltration using legitimate protocols
-- Evasion techniques employed by modern malware
-- Defensive detection strategies and mitigation approaches
+- Evasion techniques to bypass modern security controls
+- Advanced persistence and stealth methodologies
 
 ## 🏗️ Architecture
 
@@ -103,40 +103,40 @@ Interactive setup script featuring:
 5. **Transmission**: Data sent via authenticated POST requests through tunnel
 6. **Collection**: Server receives and displays credentials in real-time
 
-### Security Features Demonstrated
-- **Token Authentication**: Prevents unauthorized data submission
-- **Encrypted Tunneling**: Cloudflare provides TLS encryption
-- **Evasion Techniques**: Self-deletion, temp file cleanup, history clearing
-- **Retry Logic**: Robust transmission with exponential backoff
-- **Process Isolation**: Separate processes for server and tunnel components
+### Advanced Capabilities Demonstrated
+- **Token Authentication**: Secure communication channel for data exfiltration
+- **Encrypted Tunneling**: Cloudflare TLS encryption for covert communications
+- **Advanced Evasion**: Anti-forensic techniques including self-deletion and artifact cleanup
+- **Resilient Transmission**: Smart retry logic with exponential backoff for reliability
+- **Process Hardening**: Isolated execution environments for operational security
 
-## 🛡️ Defensive Analysis
+## 🔍 Offensive Intelligence Gathering
 
-### Detection Signatures
+### Adversary Tactics and Techniques
 
-**Network Indicators:**
-- Outbound connections to `*.trycloudflare.com`
+**Network Indicators of Compromise:**
+- Outbound connections to `*.trycloudflare.com` infrastructure
 - POST requests to `/upload` endpoints with `X-Token` headers
-- Unusual DNS queries for Cloudflare domains
+- Unusual DNS queries for Cloudflare domains during reconnaissance
 
-**Host-Based Indicators:**
-- PowerShell execution of `netsh wlan show profiles`
-- `nmcli` commands querying wireless connection details
-- Suspicious file creation/deletion in TEMP directories
-- Command history manipulation attempts
+**Host-Based Artifacts:**
+- PowerShell execution of `netsh wlan show profiles` for network enumeration
+- `nmcli` commands targeting wireless connection details
+- Suspicious file creation/deletion patterns in TEMP directories
+- Command history manipulation and cleanup activities
 
-**Behavioral Patterns:**
-- Rapid enumeration of network profiles
-- Covert data transmission to external services
-- Self-modifying/deleting executable files
+**Operational Behaviors:**
+- Rapid enumeration of saved network profiles
+- Covert data staging and transmission to external infrastructure
+- Self-modifying executables and anti-forensic measures
 
-### Mitigation Strategies
+### Blue Team Countermeasures
 
 1. **Endpoint Protection**: Monitor for unauthorized PowerShell/bash script execution
-2. **Network Monitoring**: Detect anomalous Cloudflare tunnel traffic
-3. **Access Controls**: Restrict WiFi profile enumeration capabilities
-4. **User Education**: Train users to recognize suspicious USB devices
-5. **Credential Management**: Regularly rotate WiFi passwords and use certificate-based authentication
+2. **Network Monitoring**: Detect anomalous Cloudflare tunnel traffic patterns
+3. **Access Controls**: Restrict WiFi profile enumeration capabilities system-wide
+4. **User Awareness**: Train personnel to recognize social engineering attempts
+5. **Credential Hygiene**: Implement regular password rotation and certificate-based authentication
 
 ## 🧪 Testing Environment
 

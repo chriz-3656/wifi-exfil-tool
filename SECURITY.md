@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-We take the security of this defensive research tool seriously. If you discover a security vulnerability, please follow these steps:
+We take the security of this offensive research tool seriously. If you discover a security vulnerability, please follow these steps:
 
 ### Responsible Disclosure Process
 
@@ -41,19 +41,19 @@ This tool implements several security features:
 
 ## Security Best Practices
 
-### For Researchers
-- Only test on authorized systems
-- Use isolated laboratory environments
-- Implement proper access controls
-- Monitor network traffic for anomalies
-- Maintain detailed logs of all activities
+### For Red Team Operators
+- Only conduct operations on authorized systems with proper engagement scope
+- Use isolated laboratory environments for technique development
+- Implement operational security measures to maintain stealth
+- Monitor network traffic for defensive countermeasures
+- Maintain detailed operational logs and evidence chains
 
-### For Defenders
-- Monitor for unauthorized PowerShell/bash script execution
-- Watch for Cloudflare tunnel connections
-- Implement network segmentation
-- Deploy endpoint detection solutions
-- Regular security awareness training
+### For Blue Team Defenders
+- Monitor for unauthorized PowerShell/bash script execution and credential harvesting
+- Watch for anomalous Cloudflare tunnel connections and data exfiltration patterns
+- Implement network segmentation and micro-segmentation strategies
+- Deploy advanced endpoint detection and response (EDR) solutions
+- Conduct regular security awareness training and phishing simulations
 
 ## Contact
 

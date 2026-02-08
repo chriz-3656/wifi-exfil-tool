@@ -11,7 +11,7 @@
 
 ## Description
 
-A defensive security research tool for analyzing WiFi credential extraction techniques. This toolkit demonstrates common methods used in WiFi credential exfiltration attacks for educational and authorized penetration testing purposes.
+An offensive security toolkit for WiFi credential extraction and penetration testing. This toolkit implements advanced methods used in WiFi credential exfiltration attacks for authorized red team operations and security research purposes.
 
 ## Key Features
 
@@ -56,7 +56,7 @@ penetration-testing
 wifi-security
 credential-extraction
 red-team-tools
-defensive-security
+offensive-security
 network-analysis
 cloudflare-tunnel
 python-security
