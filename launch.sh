@@ -4,15 +4,51 @@
 set -e
 
 # ──────── COLORS & STYLES ─────────
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-WHITE='\033[1;37m'
-LIME='\033[0;32m'
-NC='\033[0m' # No Color
+# Robust color detection for various environments
+ENABLE_COLORS=false
+
+# Method 1: Check if stdout is a terminal
+if [ -t 1 ] && [ -n "$TERM" ]; then
+    ENABLE_COLORS=true
+# Method 2: Check environment variables that indicate terminal capability
+elif [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
+    # Additional check for common terminal scenarios
+    case "$TERM" in
+        xterm*|screen*|tmux*|rxvt*|gnome*|konsole*|eterm*)
+            ENABLE_COLORS=true
+            ;;
+    esac
+fi
+
+# Override for forced color mode (for debugging)
+if [ "${FORCE_COLORS:-}" = "1" ]; then
+    ENABLE_COLORS=true
+fi
+
+# Set color variables based on detection
+if [ "$ENABLE_COLORS" = true ]; then
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    BLUE='\033[0;34m'
+    PURPLE='\033[0;35m'
+    CYAN='\033[0;36m'
+    WHITE='\033[1;37m'
+    LIME='\033[0;32m'
+    BOLD='\033[1m'
+    NC='\033[0m'
+else
+    RED=''
+    GREEN=''
+    YELLOW=''
+    BLUE=''
+    PURPLE=''
+    CYAN=''
+    WHITE=''
+    LIME=''
+    BOLD=''
+    NC=''
+fi
 
 # ──────── ANIMATED FUNCTIONS ─────────
 print_slow() {
@@ -21,6 +57,11 @@ print_slow() {
         sleep 0.005
     done
     echo
+}
+
+# Simple print function for colored text that avoids animation issues
+print_colored() {
+    echo -e "$1"
 }
 
 loading_spinner() {
@@ -50,8 +91,16 @@ cat << "EOF"
                                                              
 EOF
 echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
-print_slow "${GREEN}Cross-Platform Wi-Fi Exfil Toolkit (Physical Access Required)${NC}"
-print_slow "${PURPLE}DEV-CHRIZ-3656 | ChrisOS Red Team${NC}"
+
+# Use simple colored output instead of animated text to avoid escape sequence issues
+if [ "$ENABLE_COLORS" = true ]; then
+    echo -e "${BOLD}${GREEN}Cross-Platform Wi-Fi Exfil Toolkit (Physical Access Required)${NC}"
+    echo -e "${BOLD}${PURPLE}DEV-CHRIZ-3656 | ChrisOS Red Team${NC}"
+else
+    echo "Cross-Platform Wi-Fi Exfil Toolkit (Physical Access Required)"
+    echo "DEV-CHRIZ-3656 | ChrisOS Red Team"
+fi
+
 echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}\n"
 
 # ──────── SETUP VARIABLES ─────────
@@ -65,73 +114,88 @@ SERVER_PID=""
 LOG_FILE="/tmp/cfd.log"
 
 # ──────── CREATE DEDICATED DIRECTORIES ─────────
-echo -e "${CYAN}[0/6]${NC} Setting up dedicated workspace directories..."
-echo -e "${YELLOW}📂 Creating directory structure:${NC}"
+# Check if this is the first run by seeing if any directories need to be created
+DIRECTORIES_EXIST=true
+[ ! -d "$PAYLOADS_DIR" ] && DIRECTORIES_EXIST=false
+[ ! -d "$CAPTURES_DIR" ] && DIRECTORIES_EXIST=false
+[ ! -d "$CLOUDFLARED_DIR" ] && DIRECTORIES_EXIST=false
 
-# Create directories with error handling
-set +e  # Temporarily disable exit on error for directory creation
-DIRECTORIES_CREATED=0
-
-# Create base directory (tool directory already exists)
-echo -e "   ${GREEN}├──${NC} Using tool directory: $TOOL_DIR"
-
-# Create payloads directory
-if [ ! -d "$PAYLOADS_DIR" ]; then
-    echo -e "   ${CYAN}├──${NC} Creating payloads directory"
-    if mkdir -p "$PAYLOADS_DIR" 2>/dev/null; then
-        echo -e "   ${GREEN}├──${NC} Payloads directory created successfully"
-        ((DIRECTORIES_CREATED++))
+# Only show verbose output on first run
+if [ "$DIRECTORIES_EXIST" = false ]; then
+    echo -e "${CYAN}[0/6]${NC} Setting up dedicated workspace directories..."
+    echo -e "${YELLOW}📂 Creating directory structure:${NC}"
+    
+    # Create directories with error handling
+    set +e  # Temporarily disable exit on error for directory creation
+    DIRECTORIES_CREATED=0
+    
+    # Create base directory (tool directory already exists)
+    echo -e "   ${GREEN}├──${NC} Using tool directory: $TOOL_DIR"
+    
+    # Create payloads directory
+    if [ ! -d "$PAYLOADS_DIR" ]; then
+        echo -e "   ${CYAN}├──${NC} Creating payloads directory"
+        if mkdir -p "$PAYLOADS_DIR" 2>/dev/null; then
+            echo -e "   ${GREEN}├──${NC} Payloads directory created successfully"
+            ((DIRECTORIES_CREATED++))
+        else
+            echo -e "   ${RED}├──${NC} Failed to create payloads directory"
+            exit 1
+        fi
     else
-        echo -e "   ${RED}├──${NC} Failed to create payloads directory"
-        exit 1
+        echo -e "   ${GREEN}├──${NC} Payloads directory exists"
     fi
-else
-    echo -e "   ${GREEN}├──${NC} Payloads directory exists"
-fi
-
-# Create captures directory
-if [ ! -d "$CAPTURES_DIR" ]; then
-    echo -e "   ${CYAN}├──${NC} Creating captures directory"
-    if mkdir -p "$CAPTURES_DIR" 2>/dev/null; then
-        echo -e "   ${GREEN}├──${NC} Captures directory created successfully"
-        ((DIRECTORIES_CREATED++))
+    
+    # Create captures directory
+    if [ ! -d "$CAPTURES_DIR" ]; then
+        echo -e "   ${CYAN}├──${NC} Creating captures directory"
+        if mkdir -p "$CAPTURES_DIR" 2>/dev/null; then
+            echo -e "   ${GREEN}├──${NC} Captures directory created successfully"
+            ((DIRECTORIES_CREATED++))
+        else
+            echo -e "   ${RED}├──${NC} Failed to create captures directory"
+            exit 1
+        fi
     else
-        echo -e "   ${RED}├──${NC} Failed to create captures directory"
-        exit 1
+        echo -e "   ${GREEN}├──${NC} Captures directory exists"
     fi
-else
-    echo -e "   ${GREEN}├──${NC} Captures directory exists"
-fi
-
-# Create cloudflared directory
-if [ ! -d "$CLOUDFLARED_DIR" ]; then
-    echo -e "   ${CYAN}└──${NC} Creating cloudflared directory"
-    if mkdir -p "$CLOUDFLARED_DIR" 2>/dev/null; then
-        echo -e "   ${GREEN}└──${NC} Cloudflared directory created successfully"
-        ((DIRECTORIES_CREATED++))
+    
+    # Create cloudflared directory
+    if [ ! -d "$CLOUDFLARED_DIR" ]; then
+        echo -e "   ${CYAN}└──${NC} Creating cloudflared directory"
+        if mkdir -p "$CLOUDFLARED_DIR" 2>/dev/null; then
+            echo -e "   ${GREEN}└──${NC} Cloudflared directory created successfully"
+            ((DIRECTORIES_CREATED++))
+        else
+            echo -e "   ${RED}└──${NC} Failed to create cloudflared directory"
+            exit 1
+        fi
     else
-        echo -e "   ${RED}└──${NC} Failed to create cloudflared directory"
-        exit 1
+        echo -e "   ${GREEN}└──${NC} Cloudflared directory exists"
     fi
+    
+    set -e  # Re-enable exit on error
+    
+    # Summary for first run
+    if [ $DIRECTORIES_CREATED -eq 0 ]; then
+        echo -e "${GREEN}✓ All directories already exist${NC}"
+    elif [ $DIRECTORIES_CREATED -eq 1 ]; then
+        echo -e "${GREEN}✓ Created 1 new directory${NC}"
+    else
+        echo -e "${GREEN}✓ Created $DIRECTORIES_CREATED new directories${NC}"
+    fi
+    
+    echo -e "${YELLOW}📊 Directory locations:${NC}"
+    echo -e "   • Payloads: $PAYLOADS_DIR"
+    echo -e "   • Captures: $CAPTURES_DIR"
+    echo -e "   • Cloudflared: $CLOUDFLARED_DIR"
+    echo
 else
-    echo -e "   ${GREEN}└──${NC} Cloudflared directory exists"
+    # Minimal output for subsequent runs
+    echo -e "${CYAN}[0/6]${NC} Workspace directories verified..."
+    echo -e "${GREEN}✓ All required directories exist${NC}"
+    echo
 fi
-
-set -e  # Re-enable exit on error
-
-# Summary
-if [ $DIRECTORIES_CREATED -eq 0 ]; then
-    echo -e "${GREEN}✓ All directories already exist${NC}"
-elif [ $DIRECTORIES_CREATED -eq 1 ]; then
-    echo -e "${GREEN}✓ Created 1 new directory${NC}"
-else
-    echo -e "${GREEN}✓ Created $DIRECTORIES_CREATED new directories${NC}"
-fi
-
-echo -e "${YELLOW}📊 Directory locations:${NC}"
-echo -e "   • Payloads: $PAYLOADS_DIR"
-echo -e "   • Captures: $CAPTURES_DIR"
-echo -e "   • Cloudflared: $CLOUDFLARED_DIR"
 echo
 
 # ──────── TARGET SELECTION MENU ─────────
