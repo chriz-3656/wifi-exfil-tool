@@ -13,7 +13,7 @@ We take the security of this defensive research tool seriously. If you discover 
 ### Responsible Disclosure Process
 
 1. **Do NOT create a public issue** for security vulnerabilities
-2. Email security concerns to: security@chriz-3656.dev
+2. Email security concerns to: chrizmonsaji@proton.me
 3. Include the following information in your report:
    - Description of the vulnerability
    - Steps to reproduce the issue
@@ -58,10 +58,10 @@ This tool implements several security features:
 ## Contact
 
 For security-related inquiries:
-- Email: security@chriz-3656.dev
+- Email: chrizmonsaji@proton.me
 - PGP Key: Available upon request
 - Response SLA: 48 hours for acknowledgment
 
 ---
 
-*This security policy is subject to change. Last updated: February 2024*
+*This security policy is subject to change. Last updated: February 2026*
