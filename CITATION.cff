@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Developer"
+    given-names: "Chris"
+    affiliation: "ChrisOS Red Team"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+title: "WiFi Credential Exfiltration Toolkit"
+version: 1.0.0
+doi: 10.5281/zenodo.1234567
+date-released: 2024-02-08
+url: "https://github.com/chriz-3656/wifi-exfil-tool"
+repository-code: "https://github.com/chriz-3656/wifi-exfil-tool"
+repository-artifact: "https://zenodo.org/record/1234567"
+license: MIT
+keywords:
+  - "security research"
+  - "penetration testing"
+  - "wifi security"
+  - "credential extraction"
+  - "red team tools"
+  - "defensive security"
+  - "network analysis"
+abstract: "A defensive security research tool for analyzing WiFi credential extraction techniques. This toolkit demonstrates common methods used in WiFi credential exfiltration attacks for educational and authorized penetration testing purposes."

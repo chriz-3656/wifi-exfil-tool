@@ -1,1 +1,237 @@
-# wifi-exfil-tool
+# WiFi Credential Exfiltration Toolkit
+
+<div align="center">
+  
+![Python](https://img.shields.io/badge/python-3.7%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-lightgrey)
+
+**A defensive security research tool for analyzing WiFi credential extraction techniques**
+
+</div>
+
+## ⚠️ Security Research Warning
+
+> **This tool is for authorized security testing and educational purposes only.** Unauthorized access to computer systems and networks is illegal. Users must comply with all applicable laws and obtain proper authorization before testing any systems.
+
+## 📋 Overview
+
+This toolkit demonstrates common techniques used in WiFi credential exfiltration attacks. It serves as a defensive research platform to understand:
+- How attackers extract saved WiFi passwords from compromised systems
+- Methods for covert data exfiltration using legitimate protocols
+- Evasion techniques employed by modern malware
+- Defensive detection strategies and mitigation approaches
+
+## 🏗️ Architecture
+
+```
+wifi-exfil-tool/
+├── server.py              # Flask receiver server
+├── launch.sh             # Main orchestration script
+├── cleanup.sh            # Process and file cleanup utility
+├── templates/            # Platform-specific payload templates
+│   ├── windows.ps1.tpl   # Windows PowerShell extraction template
+│   └── linux.sh.tpl      # Linux NetworkManager extraction template
+├── payloads/             # Generated attack payloads (created at runtime)
+├── captures/             # Collected credentials (created at runtime)
+└── cloudflared/          # Cloudflare tunnel binary (downloaded at runtime)
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+```bash
+# Install required dependencies
+sudo apt update
+sudo apt install python3 python3-pip curl openssl python3-flask
+
+# Alternative: Install Flask via pip if system package unavailable
+# pip3 install flask --user
+```
+
+### Basic Usage
+
+```bash
+# Clone and navigate to project
+git clone <repository-url>
+cd wifi-exfil-tool
+
+# Make scripts executable
+chmod +x launch.sh cleanup.sh
+
+# Run the toolkit
+./launch.sh
+```
+
+## 🛠️ Core Components
+
+### Server (`server.py`)
+- Flask-based HTTP receiver listening on `localhost:8080`
+- Token-authenticated upload endpoint `/upload`
+- Real-time credential display in terminal
+- Automatic file storage with IP-timestamp naming
+
+### Launcher (`launch.sh`)
+Interactive setup script featuring:
+- Animated terminal interface with branding
+- Cross-platform payload generation (Windows/Linux)
+- **Enhanced directory management**: Creates dedicated `payloads/`, `captures/`, and `cloudflared/` directories within tool directory
+- Cloudflare tunnel establishment for external connectivity
+- Real-time capture monitoring
+- **Robust cleanup procedures**: Comprehensive process termination and resource cleanup
+- Detailed status reporting for all operations
+
+### Templates
+**Windows Template (`windows.ps1.tpl`)**:
+- Uses `netsh wlan` commands to enumerate WiFi profiles
+- Extracts SSID names, authentication types, and clear-text passwords
+- Implements retry logic and self-destruction mechanisms
+
+**Linux Template (`linux.sh.tpl`)**:
+- Leverages `nmcli` NetworkManager for credential extraction
+- Targets 802.11 wireless connections specifically
+- Includes operational security measures (history clearing)
+
+## 🔧 Technical Details
+
+### Communication Flow
+1. **Initialization**: Server starts with randomly generated authentication token
+2. **Tunneling**: Cloudflare tunnel establishes encrypted external access
+3. **Payload Deployment**: Target-specific scripts generated with embedded credentials
+4. **Extraction**: Victim systems execute payloads to harvest WiFi credentials
+5. **Transmission**: Data sent via authenticated POST requests through tunnel
+6. **Collection**: Server receives and displays credentials in real-time
+
+### Security Features Demonstrated
+- **Token Authentication**: Prevents unauthorized data submission
+- **Encrypted Tunneling**: Cloudflare provides TLS encryption
+- **Evasion Techniques**: Self-deletion, temp file cleanup, history clearing
+- **Retry Logic**: Robust transmission with exponential backoff
+- **Process Isolation**: Separate processes for server and tunnel components
+
+## 🛡️ Defensive Analysis
+
+### Detection Signatures
+
+**Network Indicators:**
+- Outbound connections to `*.trycloudflare.com`
+- POST requests to `/upload` endpoints with `X-Token` headers
+- Unusual DNS queries for Cloudflare domains
+
+**Host-Based Indicators:**
+- PowerShell execution of `netsh wlan show profiles`
+- `nmcli` commands querying wireless connection details
+- Suspicious file creation/deletion in TEMP directories
+- Command history manipulation attempts
+
+**Behavioral Patterns:**
+- Rapid enumeration of network profiles
+- Covert data transmission to external services
+- Self-modifying/deleting executable files
+
+### Mitigation Strategies
+
+1. **Endpoint Protection**: Monitor for unauthorized PowerShell/bash script execution
+2. **Network Monitoring**: Detect anomalous Cloudflare tunnel traffic
+3. **Access Controls**: Restrict WiFi profile enumeration capabilities
+4. **User Education**: Train users to recognize suspicious USB devices
+5. **Credential Management**: Regularly rotate WiFi passwords and use certificate-based authentication
+
+## 🧪 Testing Environment
+
+For safe testing and research:
+
+```bash
+# Setup isolated test environment
+mkdir test-environment
+cd test-environment
+
+# Create test WiFi profiles (Linux example)
+sudo nmcli con add type wifi con-name "TestNetwork" \
+    ifname wlan0 ssid "TestNetwork" \
+    wifi-sec.key-mgmt wpa-psk \
+    wifi-sec.psk "testpassword123"
+
+# Run toolkit in controlled environment
+../wifi-exfil-tool/launch.sh
+```
+
+## 📊 Logging and Monitoring
+
+Captured credentials are stored in the `captures/` directory with format:
+```
+captures/
+└── 192.168.1.100_20240125-143022.txt
+```
+
+Each file contains:
+- Timestamp of capture
+- Source IP address
+- Extracted WiFi profile information
+- Authentication and cipher details
+
+## 🧹 Enhanced Cleanup Procedures
+
+The toolkit now features comprehensive cleanup mechanisms:
+
+```bash
+# Standard cleanup (stops processes, clears logs)
+./cleanup.sh
+
+# Full cleanup (removes all generated files including cloudflared)
+./cleanup.sh --full
+
+# Help documentation
+./cleanup.sh --help
+```
+
+**Enhanced cleanup features:**
+- Automatic process termination for Flask server and Cloudflared tunnel
+- Background process detection and cleanup
+- Temporary file removal (/tmp/cfd.log)
+- Graceful shutdown with forced cleanup for stubborn processes
+- Real-time status reporting during cleanup operations
+
+## 📚 Educational Resources
+
+### Related Research Topics
+- Living-off-the-land techniques (LotL)
+- Command and Control (C2) communication methods
+- Endpoint detection and response (EDR) evasion
+- Network protocol abuse for data exfiltration
+
+### Defensive Tooling
+- Sysmon configuration for PowerShell monitoring
+- Network intrusion detection signatures
+- Host-based behavioral analytics
+- Cloud access security broker (CASB) integration
+
+## ⚖️ Legal Compliance
+
+This tool must only be used in accordance with:
+- Company policies and acceptable use guidelines
+- Applicable federal, state, and local laws
+- Written authorization from system owners
+- Ethical hacking frameworks and standards
+
+## 🤝 Contributing
+
+This project welcomes contributions focused on:
+- Improving defensive detection capabilities
+- Enhancing security research documentation
+- Developing better mitigation strategies
+- Creating educational content for cybersecurity professionals
+
+## 📄 License
+
+This research tool is provided for educational and defensive security purposes under the MIT License.
+
+---
+
+<div align="center">
+
+**Developed for Defensive Security Research**  
+*Understanding threats to better protect systems*
+
+</div>
