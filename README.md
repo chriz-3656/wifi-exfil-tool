@@ -8,7 +8,7 @@
 
 **An offensive security toolkit for WiFi credential extraction and penetration testing**
 
-  <img src="https://i.ibb.co/sv4bbwPY/wifirecon1.png" alt="WiFi Recon Toolkit">
+  <img src="assets/demo.png" alt="WiFi Recon Toolkit" width="100%">
 
 </div>
 
